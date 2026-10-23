@@ -1,0 +1,18 @@
+{
+	"name": "vscode-agent-plugin-test-fixtures",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"generate": "node scripts/generate.mjs",
+		"test": "node --test",
+		"test:sdk": "node scripts/check-sdk.mjs",
+		"package-extension": "npm run generate && cd extension && vsce package --no-dependencies --allow-missing-repository --out ../dist/fixture-extension.vsix"
+	},
+	"devDependencies": {
+		"@vscode/vsce": "^4.0.0"
+	}
+}

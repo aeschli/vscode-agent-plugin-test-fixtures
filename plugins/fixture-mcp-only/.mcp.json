@@ -1,0 +1,12 @@
+{
+	"mcpServers": {
+		"fixture-mcp-only": {
+			"type": "stdio",
+			"command": "node",
+			"args": [
+				"${PLUGIN_ROOT}/scripts/mcp-server.cjs",
+				"fixture-mcp-only"
+			]
+		}
+	}
+}

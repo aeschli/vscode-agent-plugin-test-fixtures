@@ -1,0 +1,21 @@
+{
+	"name": "agent-plugin-lifecycle-fixture",
+	"displayName": "Agent Plugin Lifecycle Fixture",
+	"description": "Test-only extension contributing a deterministic chat plugin.",
+	"publisher": "plugin-fixture-tests",
+	"version": "1.0.0",
+	"engines": {
+		"vscode": "^1.142.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"license": "MIT",
+	"contributes": {
+		"chatPlugins": [
+			{
+				"path": "./plugin"
+			}
+		]
+	}
+}

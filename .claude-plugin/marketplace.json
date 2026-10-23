@@ -1,0 +1,30 @@
+{
+	"name": "vscode-agent-plugin-fixtures",
+	"owner": {
+		"name": "VS Code plugin test fixtures"
+	},
+	"metadata": {
+		"description": "Credential-free, deterministic plugin lifecycle fixtures.",
+		"version": "1.0.0"
+	},
+	"plugins": [
+		{
+			"name": "fixture-mixed",
+			"description": "Lifecycle test: fixture-mixed",
+			"version": "1.0.0",
+			"source": "./plugins/fixture-mixed"
+		},
+		{
+			"name": "fixture-hooks-only",
+			"description": "Lifecycle test: fixture-hooks-only",
+			"version": "1.0.0",
+			"source": "./plugins/fixture-hooks-only"
+		},
+		{
+			"name": "fixture-mcp-only",
+			"description": "Lifecycle test: fixture-mcp-only",
+			"version": "1.0.0",
+			"source": "./plugins/fixture-mcp-only"
+		}
+	]
+}

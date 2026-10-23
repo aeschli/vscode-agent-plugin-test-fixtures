@@ -1,0 +1,6 @@
+{
+	"name": "fixture-hooks-only",
+	"description": "Deterministic plugin lifecycle fixture: fixture-hooks-only.",
+	"version": "1.0.0",
+	"license": "MIT"
+}

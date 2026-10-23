@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"hooks": {
+		"sessionStart": [
+			{
+				"type": "command",
+				"bash": "node \"${PLUGIN_ROOT}/scripts/hook.cjs\" fixture-mixed sessionStart",
+				"powershell": "node \"${PLUGIN_ROOT}/scripts/hook.cjs\" fixture-mixed sessionStart",
+				"timeoutSec": 10
+			}
+		],
+		"userPromptSubmitted": [
+			{
+				"type": "command",
+				"bash": "node \"${PLUGIN_ROOT}/scripts/hook.cjs\" fixture-mixed userPromptSubmitted",
+				"powershell": "node \"${PLUGIN_ROOT}/scripts/hook.cjs\" fixture-mixed userPromptSubmitted",
+				"timeoutSec": 10
+			}
+		]
+	}
+}

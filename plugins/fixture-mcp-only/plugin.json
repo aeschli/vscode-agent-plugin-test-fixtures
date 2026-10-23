@@ -1,0 +1,6 @@
+{
+	"name": "fixture-mcp-only",
+	"description": "Deterministic plugin lifecycle fixture: fixture-mcp-only.",
+	"version": "1.0.0",
+	"license": "MIT"
+}

@@ -1,0 +1,6 @@
+{
+	"name": "fixture-configured",
+	"description": "Deterministic plugin lifecycle fixture: fixture-configured.",
+	"version": "1.0.0",
+	"license": "MIT"
+}
