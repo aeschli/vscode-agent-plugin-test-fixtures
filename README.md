@@ -25,7 +25,13 @@ A publishable test repository for [microsoft/vscode#343747](https://github.com/m
 
 Generated plugin directories are self-contained: installed caches and packaged extensions do not refer back to this checkout. Commit the generated files when publishing. Templates and `scripts/generate.mjs` keep copies consistent.
 
-## Prepare and package
+## Ready-to-use test setup
+
+Clone this repository to get the generated plugins and the prebuilt `dist/fixture-extension.vsix`. No npm install or packaging step is needed to run the manual test.
+
+Alternatively, [download the prebuilt fixture VSIX](https://github.com/aeschli/vscode-agent-plugin-test-fixtures/raw/refs/heads/main/dist/fixture-extension.vsix) and install it with **Extensions: Install from VSIX...**. The settings-provided plugin still requires a local clone. Node.js 22+ must remain available for the hooks and MCP servers.
+
+## Rebuild and validate fixtures
 
 ```sh
 npm ci
@@ -34,13 +40,13 @@ npm test
 npm run package-extension
 ```
 
-The last command produces `dist/fixture-extension.vsix`. It packages locally; it does not publish an extension. The test publisher `plugin-fixture-tests` is only an identifier and does not require a Marketplace account for installing the VSIX.
+The last command rebuilds the committed `dist/fixture-extension.vsix`. Regenerate and commit it whenever extension fixture content changes. It packages locally; it does not publish an extension. The test publisher `plugin-fixture-tests` is only an identifier and does not require a Marketplace account for installing the VSIX.
 
 `npm test` checks the catalog/layout, hooks and marker privacy, and the MCP protocol with real Node subprocesses, including invalid requests.
 
 ## Publish this repository
 
-Create your own GitHub repository and push this directory, including generated plugin files and the lockfile, but excluding `node_modules` and `dist`. Attach the VSIX to a release if other testers should not need to build it.
+Create your own GitHub repository and push this directory, including generated plugin files, the lockfile, and the prebuilt `dist/fixture-extension.vsix`, but excluding `node_modules`. Update the download link above if publishing under a different repository.
 
 Replace `OWNER/REPO` below with the repository you publish. Do not put private credentials into this repository. No remote, commit, GitHub repository, or release is created by the generation commands.
 
