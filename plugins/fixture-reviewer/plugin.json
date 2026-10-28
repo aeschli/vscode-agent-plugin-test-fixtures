@@ -1,0 +1,6 @@
+{
+	"name": "fixture-reviewer",
+	"description": "Deterministic plugin lifecycle fixture: fixture-reviewer.",
+	"version": "1.0.0",
+	"license": "MIT"
+}

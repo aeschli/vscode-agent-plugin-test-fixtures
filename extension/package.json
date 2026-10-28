@@ -15,6 +15,9 @@
 		"chatAgents": [
 			{
 				"path": "./agents/fixture-extension-contributed-agent.agent.md"
+			},
+			{
+				"path": "./agents/reviewer.agent.md"
 			}
 		],
 		"chatPlugins": [

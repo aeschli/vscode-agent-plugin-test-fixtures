@@ -19,7 +19,7 @@ const client = new CopilotClient({
 
 try {
 	await client.start();
-	const fixtures = ['fixture-mixed', 'fixture-hooks-only', 'fixture-mcp-only'];
+	const fixtures = ['fixture-mixed', 'fixture-hooks-only', 'fixture-mcp-only', 'fixture-reviewer'];
 	for (const name of fixtures) {
 		await client.rpc.plugins.install({ source: join(root, 'plugins', name) });
 	}
@@ -41,6 +41,7 @@ try {
 	assert.ok(skills.skills.some(skill => skill.name === 'fixture-mixed-hello' && skill.source === 'plugin'));
 	const agents = await client.rpc.agents.discover({ projectPaths: [home] });
 	assert.ok(agents.agents.some(agent => agent.id === 'fixture-mixed:fixture-mixed-agent' && agent.source === 'plugin'), JSON.stringify(agents, null, 2));
+	assert.ok(agents.agents.some(agent => agent.displayName === 'Reviewer' && agent.id === 'fixture-reviewer:reviewer' && agent.source === 'plugin'), JSON.stringify(agents, null, 2));
 	const instructions = await client.rpc.instructions.discover({ projectPaths: [home] });
 	if (!instructions.sources.some(source => source.sourcePath.includes('fixture-mixed.instructions.md'))) {
 		console.warn('SDK discovery limitation: fixture plugin rule was not returned by instructions.discover.');
@@ -52,6 +53,8 @@ try {
 	assert.ok(!disabledHooks.hooks.some(hook => hook.origin === 'plugin'));
 	const disabledMcp = await client.rpc.mcp.discover({ workingDirectory: home });
 	assert.ok(!disabledMcp.servers.some(server => server.source === 'plugin'));
+	const disabledAgents = await client.rpc.agents.discover({ projectPaths: [home] });
+	assert.ok(!disabledAgents.agents.some(agent => agent.source === 'plugin'));
 	await client.rpc.plugins.enable({ names: fixtures });
 	assert.ok((await client.rpc.plugins.list()).plugins.every(plugin => plugin.enabled));
 	for (const plugin of plugins) {

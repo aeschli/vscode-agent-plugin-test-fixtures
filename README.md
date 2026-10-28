@@ -19,10 +19,12 @@ A publishable test repository for [microsoft/vscode#343747](https://github.com/m
 | `plugins/fixture-mixed` | Skill, command, agent, instruction, lifecycle hooks, MCP server |
 | `plugins/fixture-hooks-only` | Hooks only; no prompt-file discovery anchor |
 | `plugins/fixture-mcp-only` | MCP only; no prompt-file discovery anchor |
+| `plugins/fixture-reviewer` | Agent-only plugin with a `Reviewer` agent |
 | `plugins/fixture-configured` | Mixed contributions with a separate identity for `chat.pluginLocations` |
 | `extension/plugin` (`fixture-extension`) | Mixed contributions via a declarative `chatPlugins` extension |
 | `extension/agents/fixture-extension-contributed-agent.agent.md` | Independent custom agent via the extension's `chatAgents` contribution |
-| `.claude-plugin/marketplace.json` | Marketplace listing mixed, hooks-only, and MCP-only plugins |
+| `extension/agents/reviewer.agent.md` | `Reviewer` via `chatAgents`, for same-name discovery tests |
+| `.claude-plugin/marketplace.json` | Marketplace listing mixed, hooks-only, MCP-only, and Reviewer-only plugins |
 
 Generated plugin directories are self-contained: installed caches and packaged extensions do not refer back to this checkout. Commit the generated files when publishing. Templates and `scripts/generate.mjs` keep copies consistent.
 
@@ -57,7 +59,7 @@ Replace `OWNER/REPO` below with the repository you publish. Do not put private c
 2. In the plugin marketplace management UI, add `OWNER/REPO` as a marketplace source. Its catalog name is `vscode-agent-plugin-fixtures`.
 3. Browse that marketplace and install `fixture-mixed`.
 4. Run the checks below. Disable, enable, uninstall, and reinstall using the UI, verifying its state updates.
-5. Repeat for `fixture-hooks-only` and `fixture-mcp-only`.
+5. Repeat for `fixture-hooks-only`, `fixture-mcp-only`, and `fixture-reviewer`.
 
 CLI equivalents (optional, for checking native ownership) are:
 
@@ -79,7 +81,7 @@ Before publishing, the SDK smoke check can register this local directory as a ma
 1. Uninstall the marketplace copy of the fixture first.
 2. Open **Chat Customizations → Plugins → Install from Source**.
 3. Enter `OWNER/REPO:plugins/fixture-mixed`.
-4. Repeat the same lifecycle checks. Repeat with `OWNER/REPO:plugins/fixture-hooks-only` and `OWNER/REPO:plugins/fixture-mcp-only`.
+4. Repeat the same lifecycle checks. Repeat with `OWNER/REPO:plugins/fixture-hooks-only`, `OWNER/REPO:plugins/fixture-mcp-only`, and `OWNER/REPO:plugins/fixture-reviewer`.
 5. Uninstall each direct installation through its installed item before switching source.
 
 CLI equivalent:
@@ -119,11 +121,21 @@ On Windows use forward slashes, for example `C:/test/vscode-agent-plugin-test-fi
 1. Run **Extensions: Install from VSIX...** and select `dist/fixture-extension.vsix`.
 2. Reload if requested. Verify the **Agent Plugin Lifecycle Fixture** extension and `fixture-extension` plugin appear.
 3. Select `fixture-extension-contributed-agent` and ask for the fixture agent identity: expect exactly `AGENT_OK_fixture-extension-contributed`.
-4. Run the checks below and test plugin-level Disable/Enable. The directly contributed agent must remain available when the plugin is disabled.
-5. Separately disable/re-enable the owning extension, honoring any required reload, and verify both plugin and directly contributed agent removal/restoration.
-6. Uninstall the extension, reload if requested, and start a fresh chat: both the plugin and directly contributed agent must be absent.
+4. Select the extension's `Reviewer` and ask for the fixture agent identity: expect exactly `AGENT_OK_fixture-extension-reviewer`.
+5. Run the checks below and test plugin-level Disable/Enable. Both directly contributed agents must remain available when the plugin is disabled.
+6. Separately disable/re-enable the owning extension, honoring any required reload, and verify plugin and both directly contributed agents removal/restoration.
+7. Uninstall the extension, reload if requested, and start a fresh chat: the plugin and both directly contributed agents must be absent.
 
-No extension-host JavaScript is needed: `extension/package.json` contributes `chatPlugins` with path `./plugin` and `chatAgents` with path `./agents/fixture-extension-contributed-agent.agent.md`. The directly contributed agent is outside the plugin to keep the two discovery paths independent. Do not add the plugin directory to `chat.pluginLocations` or SDK-install it; doing so would invalidate the source-isolation test.
+No extension-host JavaScript is needed: `extension/package.json` contributes `chatPlugins` with path `./plugin` and `chatAgents` with paths `./agents/fixture-extension-contributed-agent.agent.md` and `./agents/reviewer.agent.md`. The directly contributed agents are outside the plugin to keep the discovery paths independent. Do not add the extension's plugin directory to `chat.pluginLocations` or SDK-install it; doing so would invalidate the source-isolation test.
+
+### Same-name Reviewer agents
+
+Install `fixture-reviewer` from the marketplace or source alongside the extension. Both sources declare an agent named `Reviewer`. Ask each available Reviewer for the fixture agent identity and record discovery, source labels, and any name-collision behavior:
+
+- Extension: `AGENT_OK_fixture-extension-reviewer`.
+- Standalone plugin: `AGENT_OK_fixture-reviewer-reviewer`.
+
+The Reviewer-only plugin has no skills, commands, instructions, hooks, or MCP servers. Disabling or uninstalling it must leave the extension's Reviewer available; disabling the extension must leave the standalone plugin's Reviewer available.
 
 ## Observable checks
 

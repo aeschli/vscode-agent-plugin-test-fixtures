@@ -6,4 +6,6 @@ The extension also contributes `fixture-extension-contributed-agent` directly th
 
 Requires Node.js on PATH. When enabled, hooks append fixture/event/timestamp markers to `~/.vscode-agent-plugin-test-fixtures/events.jsonl`; no prompt text is recorded. The MCP server only echoes supplied text and uses no external services.
 
-Disable or uninstall this extension to remove both contributions. Plugin-level enablement is tested separately in Chat Customizations: disabling the plugin must not remove the directly contributed agent.
+The extension also contributes `Reviewer` directly through `chatAgents`. Ask for the fixture agent identity: expect exactly `AGENT_OK_fixture-extension-reviewer`. The separate `fixture-reviewer` plugin in this repository supplies another agent named `Reviewer`, with marker `AGENT_OK_fixture-reviewer-reviewer`, for same-name discovery tests.
+
+Disable or uninstall this extension to remove its plugin and both directly contributed agents. Plugin-level enablement is tested separately in Chat Customizations: disabling the plugin must not remove the directly contributed agents.

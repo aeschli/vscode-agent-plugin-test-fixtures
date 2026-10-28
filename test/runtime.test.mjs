@@ -58,6 +58,7 @@ test('extension contributes a distinct custom agent outside the plugin', async (
 	const manifest = await json(join(root, 'extension/package.json'));
 	assert.deepEqual(manifest.contributes.chatAgents, [
 		{ path: './agents/fixture-extension-contributed-agent.agent.md' },
+		{ path: './agents/reviewer.agent.md' },
 	]);
 	const agent = await readFile(join(root, 'extension', manifest.contributes.chatAgents[0].path), 'utf8');
 	assert.match(agent, /^---\nname: fixture-extension-contributed-agent\ndescription: '[^\n]+'\nuser-invocable: true\n---\n/);
@@ -66,6 +67,22 @@ test('extension contributes a distinct custom agent outside the plugin', async (
 	const pluginAgent = await readFile(join(directory('fixture-extension'), 'agents/fixture-extension-agent.agent.md'), 'utf8');
 	assert.match(pluginAgent, /^---\nname: fixture-extension-agent\n/);
 	assert.match(pluginAgent, /reply with exactly: AGENT_OK_fixture-extension\n/);
+});
+
+test('extension and standalone plugin provide Reviewers with distinct identities', async () => {
+	const catalog = await json(join(root, '.claude-plugin/marketplace.json'));
+	assert.ok(catalog.plugins.some(plugin => plugin.name === 'fixture-reviewer' && plugin.source === './plugins/fixture-reviewer'));
+	assert.deepEqual((await readdir(directory('fixture-reviewer'))).sort(), ['agents', 'plugin.json']);
+	assert.deepEqual(await readdir(join(directory('fixture-reviewer'), 'agents')), ['reviewer.agent.md']);
+	for (const [path, marker] of [
+		[join(root, 'extension/agents/reviewer.agent.md'), 'AGENT_OK_fixture-extension-reviewer'],
+		[join(directory('fixture-reviewer'), 'agents/reviewer.agent.md'), 'AGENT_OK_fixture-reviewer-reviewer'],
+	]) {
+		const agent = await readFile(path, 'utf8');
+		assert.match(agent, /^---\nname: Reviewer\ndescription: '[^\n]+'\nuser-invocable: true\n---\n/);
+		assert.ok(agent.includes(`reply with exactly: ${marker}\n`));
+		assert.match(agent, /Do not modify files\./);
+	}
 });
 
 for (const fixture of fixtures.filter(name => name !== 'fixture-hooks-only')) {

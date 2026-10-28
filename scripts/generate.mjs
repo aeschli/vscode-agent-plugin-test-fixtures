@@ -12,6 +12,7 @@ const definitions = [
 	{ name: 'fixture-mixed', prompts: true, hooks: true, mcp: true },
 	{ name: 'fixture-hooks-only', hooks: true },
 	{ name: 'fixture-mcp-only', mcp: true },
+	{ name: 'fixture-reviewer', reviewer: true },
 	{ name: 'fixture-configured', prompts: true, hooks: true, mcp: true },
 	{ name: 'fixture-extension', prompts: true, hooks: true, mcp: true, extension: true },
 ];
@@ -25,6 +26,10 @@ async function json(path, value) {
 	await write(path, `${JSON.stringify(value, null, '\t')}\n`);
 }
 
+function reviewerAgent(source) {
+	return `---\nname: Reviewer\ndescription: 'Use when reviewing code or explicitly testing the ${source} Reviewer agent.'\nuser-invocable: true\n---\n\nWhen asked for the fixture agent identity, reply with exactly: AGENT_OK_${source}-reviewer\nOtherwise, review the requested code for bugs and regressions. Report actionable findings with file locations, or state that no issues were found.\nDo not modify files. Do not call tools unless explicitly requested by the user.\n`;
+}
+
 for (const fixture of definitions) {
 	const directory = fixture.extension
 		? join(root, 'extension', 'plugin')
@@ -35,7 +40,9 @@ for (const fixture of definitions) {
 		version: '1.0.0',
 		license: 'MIT',
 	});
-	await mkdir(join(directory, 'scripts'), { recursive: true });
+	if (fixture.hooks || fixture.mcp) {
+		await mkdir(join(directory, 'scripts'), { recursive: true });
+	}
 	for (const script of ['hook.cjs', 'mcp-server.cjs']) {
 		if ((script === 'hook.cjs' && fixture.hooks) || (script === 'mcp-server.cjs' && fixture.mcp)) {
 			await copyFile(join(root, 'templates', script), join(directory, 'scripts', script));
@@ -64,6 +71,9 @@ for (const fixture of definitions) {
 			},
 		});
 	}
+	if (fixture.reviewer) {
+		await write(join(directory, 'agents', 'reviewer.agent.md'), reviewerAgent(fixture.name));
+	}
 	if (fixture.prompts) {
 		await write(join(directory, 'skills', `${fixture.name}-hello`, 'SKILL.md'),
 			`---\nname: ${fixture.name}-hello\ndescription: 'Use when explicitly testing the ${fixture.name} plugin hello skill.'\nuser-invocable: true\n---\n\nReply with exactly: SKILL_OK_${fixture.name}\n`);
@@ -78,6 +88,7 @@ for (const fixture of definitions) {
 
 await write(join(root, 'extension', 'agents', 'fixture-extension-contributed-agent.agent.md'),
 	`---\nname: fixture-extension-contributed-agent\ndescription: 'Use when explicitly testing the extension chatAgents contribution, independently of its plugin.'\nuser-invocable: true\n---\n\nWhen asked for the fixture agent identity, reply with exactly: AGENT_OK_fixture-extension-contributed\nDo not modify files or call tools unless explicitly requested by the user.\n`);
+await write(join(root, 'extension', 'agents', 'reviewer.agent.md'), reviewerAgent('fixture-extension'));
 
 await json(join(root, '.claude-plugin', 'marketplace.json'), {
 	name: 'vscode-agent-plugin-fixtures',

@@ -25,6 +25,12 @@
 			"description": "Lifecycle test: fixture-mcp-only",
 			"version": "1.0.0",
 			"source": "./plugins/fixture-mcp-only"
+		},
+		{
+			"name": "fixture-reviewer",
+			"description": "Lifecycle test: fixture-reviewer",
+			"version": "1.0.0",
+			"source": "./plugins/fixture-reviewer"
 		}
 	]
 }
