@@ -3,7 +3,7 @@
 	"displayName": "Agent Plugin Lifecycle Fixture",
 	"description": "Test-only extension contributing a deterministic chat plugin and custom agent.",
 	"publisher": "plugin-fixture-tests",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"engines": {
 		"vscode": "^1.142.0"
 	},
