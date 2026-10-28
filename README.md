@@ -21,6 +21,7 @@ A publishable test repository for [microsoft/vscode#343747](https://github.com/m
 | `plugins/fixture-mcp-only` | MCP only; no prompt-file discovery anchor |
 | `plugins/fixture-configured` | Mixed contributions with a separate identity for `chat.pluginLocations` |
 | `extension/plugin` (`fixture-extension`) | Mixed contributions via a declarative `chatPlugins` extension |
+| `extension/agents/fixture-extension-contributed-agent.agent.md` | Independent custom agent via the extension's `chatAgents` contribution |
 | `.claude-plugin/marketplace.json` | Marketplace listing mixed, hooks-only, and MCP-only plugins |
 
 Generated plugin directories are self-contained: installed caches and packaged extensions do not refer back to this checkout. Commit the generated files when publishing. Templates and `scripts/generate.mjs` keep copies consistent.
@@ -42,7 +43,7 @@ npm run package-extension
 
 The last command rebuilds the committed `dist/fixture-extension.vsix`. Regenerate and commit it whenever extension fixture content changes. It packages locally; it does not publish an extension. The test publisher `plugin-fixture-tests` is only an identifier and does not require a Marketplace account for installing the VSIX.
 
-`npm test` checks the catalog/layout, hooks and marker privacy, and the MCP protocol with real Node subprocesses, including invalid requests.
+`npm test` checks the catalog/layout, direct agent contribution and identity, hooks and marker privacy, and the MCP protocol with real Node subprocesses, including invalid requests.
 
 ## Publish this repository
 
@@ -117,11 +118,12 @@ On Windows use forward slashes, for example `C:/test/vscode-agent-plugin-test-fi
 
 1. Run **Extensions: Install from VSIX...** and select `dist/fixture-extension.vsix`.
 2. Reload if requested. Verify the **Agent Plugin Lifecycle Fixture** extension and `fixture-extension` plugin appear.
-3. Run the checks below and test plugin-level Disable/Enable.
-4. Separately disable/re-enable the owning extension, honoring any required reload, and verify plugin removal/restoration.
-5. Uninstall the extension, reload if requested, and start a fresh chat: the plugin must be absent.
+3. Select `fixture-extension-contributed-agent` and ask for the fixture agent identity: expect exactly `AGENT_OK_fixture-extension-contributed`.
+4. Run the checks below and test plugin-level Disable/Enable. The directly contributed agent must remain available when the plugin is disabled.
+5. Separately disable/re-enable the owning extension, honoring any required reload, and verify both plugin and directly contributed agent removal/restoration.
+6. Uninstall the extension, reload if requested, and start a fresh chat: both the plugin and directly contributed agent must be absent.
 
-No extension-host JavaScript is needed: `extension/package.json` contributes `chatPlugins` with path `./plugin`. Do not add this directory to `chat.pluginLocations` or SDK-install it; doing so would invalidate the source-isolation test.
+No extension-host JavaScript is needed: `extension/package.json` contributes `chatPlugins` with path `./plugin` and `chatAgents` with path `./agents/fixture-extension-contributed-agent.agent.md`. The directly contributed agent is outside the plugin to keep the two discovery paths independent. Do not add the plugin directory to `chat.pluginLocations` or SDK-install it; doing so would invalidate the source-isolation test.
 
 ## Observable checks
 

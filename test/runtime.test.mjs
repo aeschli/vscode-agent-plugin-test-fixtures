@@ -54,6 +54,20 @@ test('every hook resolves its installed root and writes one marker per invocatio
 	}
 });
 
+test('extension contributes a distinct custom agent outside the plugin', async () => {
+	const manifest = await json(join(root, 'extension/package.json'));
+	assert.deepEqual(manifest.contributes.chatAgents, [
+		{ path: './agents/fixture-extension-contributed-agent.agent.md' },
+	]);
+	const agent = await readFile(join(root, 'extension', manifest.contributes.chatAgents[0].path), 'utf8');
+	assert.match(agent, /^---\nname: fixture-extension-contributed-agent\ndescription: '[^\n]+'\nuser-invocable: true\n---\n/);
+	assert.match(agent, /reply with exactly: AGENT_OK_fixture-extension-contributed\n/);
+	assert.match(agent, /Do not modify files or call tools unless explicitly requested by the user\./);
+	const pluginAgent = await readFile(join(directory('fixture-extension'), 'agents/fixture-extension-agent.agent.md'), 'utf8');
+	assert.match(pluginAgent, /^---\nname: fixture-extension-agent\n/);
+	assert.match(pluginAgent, /reply with exactly: AGENT_OK_fixture-extension\n/);
+});
+
 for (const fixture of fixtures.filter(name => name !== 'fixture-hooks-only')) {
 	test(`${fixture}: MCP initialize, list, call, and invalid requests`, async () => {
 		const config = await json(join(directory(fixture), '.mcp.json'));

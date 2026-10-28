@@ -76,6 +76,9 @@ for (const fixture of definitions) {
 	}
 }
 
+await write(join(root, 'extension', 'agents', 'fixture-extension-contributed-agent.agent.md'),
+	`---\nname: fixture-extension-contributed-agent\ndescription: 'Use when explicitly testing the extension chatAgents contribution, independently of its plugin.'\nuser-invocable: true\n---\n\nWhen asked for the fixture agent identity, reply with exactly: AGENT_OK_fixture-extension-contributed\nDo not modify files or call tools unless explicitly requested by the user.\n`);
+
 await json(join(root, '.claude-plugin', 'marketplace.json'), {
 	name: 'vscode-agent-plugin-fixtures',
 	owner: { name: 'VS Code plugin test fixtures' },
